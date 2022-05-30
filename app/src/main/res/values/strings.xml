@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">TechnicalAssignment</string>
+    <string name="fab_description_to_top">To Top</string>
 </resources>

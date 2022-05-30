@@ -4,8 +4,18 @@
     android:id="@+id/home"
     app:startDestination="@id/homeFragment">
 
+    <include app:graph="@navigation/movie_details" />
+
     <fragment
         android:id="@+id/homeFragment"
         android:name="com.blinxio.technicalassignment.home.HomeFragment"
-        android:label="HomeFragment" />
+        android:label="HomeFragment">
+        <action
+            android:id="@+id/openMovieDetailsFragment"
+            app:destination="@+id/movie_details"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
+    </fragment>
 </navigation>
