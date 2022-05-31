@@ -23,6 +23,7 @@ android {
         it.buildConfigField 'String', 'BASE_URL', BASE_URL
         it.buildConfigField 'String', 'API_VERSION', API_VERSION
         it.buildConfigField 'String', 'API_KEY', API_KEY
+        it.buildConfigField 'String', 'IMAGE_URL', IMAGE_URL
     }
 
     buildTypes {

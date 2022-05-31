@@ -8,12 +8,23 @@ import retrofit2.http.Query
 
 interface MoviesApiInterface {
 
-    @GET("${BuildConfig.API_VERSION}discover/movie?api_key=${BuildConfig.API_KEY}")
+    companion object {
+        private const val LANGUAGE_QUERY = "language"
+        private const val SORT_BY_QUERY = "sort_by"
+        private const val INCLUDE_ADULT_QUERY = "include_adult"
+        private const val INCLUDE_VIDEO_QUERY = "include_video"
+        private const val PAGE_QUERY = "page"
+        private const val DISCOVER_PATH = "discover"
+        private const val MOVIE_PATH = "movie"
+        private const val API_KEY_PATH = "api_key"
+    }
+
+    @GET("${BuildConfig.API_VERSION}$DISCOVER_PATH/$MOVIE_PATH?$API_KEY_PATH=${BuildConfig.API_KEY}")
     suspend fun getListOfMovies(
-        @Query("language") language: String = "en-US",
-        @Query("sort_by") sort_by: String = "popularity.desc",
-        @Query("include_adult") includeAdult: Boolean = false,
-        @Query("include_video") includeVideo: Boolean = false,
-        @Query("page") page: Int = 1
+        @Query(LANGUAGE_QUERY) language: String = "en-US",
+        @Query(SORT_BY_QUERY) sort_by: String = "popularity.desc",
+        @Query(INCLUDE_ADULT_QUERY) includeAdult: Boolean = false,
+        @Query(INCLUDE_VIDEO_QUERY) includeVideo: Boolean = false,
+        @Query(PAGE_QUERY) page: Int = 1
     ): Response<MovieModel>
 }

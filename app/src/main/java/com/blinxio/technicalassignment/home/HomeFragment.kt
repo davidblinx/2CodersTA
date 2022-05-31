@@ -6,16 +6,27 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.coroutineScope
+import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.blinxio.technicalassignment.R
 import com.blinxio.technicalassignment.databinding.FragmentHomeBinding
+import com.blinxio.technicalassignment.home.adapters.MoviesAdapter
 import com.blinxio.technicalassignment.home.viewmodel.HomeViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class HomeFragment : Fragment(R.layout.fragment_home) {
 
     private var binding: FragmentHomeBinding? = null
     private val homeViewModel by viewModels<HomeViewModel>()
+
+    @Inject
+    lateinit var moviesAdapter: MoviesAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -34,8 +45,25 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding?.toTop?.setOnClickListener {
+        binding?.moviesList?.adapter = moviesAdapter
+        binding?.moviesList?.layoutManager = LinearLayoutManager(requireContext())
 
+        moviesAdapter.onClickListener = { movieResult ->
+            movieResult.id?.let { movieId ->
+                findNavController().navigate(HomeFragmentDirections.openMovieDetailsFragment(movieId))
+            }
+        }
+
+        viewLifecycleOwner.lifecycle.coroutineScope.launch {
+            viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                homeViewModel.moviesList.collect {
+                    moviesAdapter.submitList(it?.movieResults)
+                }
+            }
+        }
+
+        binding?.toTop?.setOnClickListener {
+            binding?.moviesList?.scrollToPosition(0)
         }
     }
 
