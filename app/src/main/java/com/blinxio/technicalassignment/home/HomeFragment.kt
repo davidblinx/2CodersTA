@@ -7,9 +7,6 @@ import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.coroutineScope
-import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.blinxio.technicalassignment.R
@@ -17,9 +14,9 @@ import com.blinxio.technicalassignment.databinding.FragmentHomeBinding
 import com.blinxio.technicalassignment.home.adapters.MoviesAdapter
 import com.blinxio.technicalassignment.home.viewmodel.HomeViewModel
 import com.blinxio.technicalassignment.network.ApiResult
+import com.blinxio.technicalassignment.utils.repeatOnLifecycleStarted
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -67,27 +64,25 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
     }
 
     private fun fetchMoviesList(view: View) {
-        viewLifecycleOwner.lifecycle.coroutineScope.launch {
-            viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                homeViewModel.moviesList.collect { apiResult ->
-                    binding?.loadingProgressBar?.isVisible = apiResult is ApiResult.Loading
-                    when (apiResult) {
-                        is ApiResult.Success -> moviesAdapter.submitList(apiResult.value?.movieResults)
-                        is ApiResult.Error -> {
-                            snack = Snackbar.make(
-                                view, R.string.error_occured_message, Snackbar.LENGTH_INDEFINITE
-                            ).setAction(
-                                R.string.error_retry_option
-                            ) {
-                                homeViewModel.getMovies()
-                            }
-                            snack!!.show()
-                        }
-                        else -> {}
+        repeatOnLifecycleStarted {
+            homeViewModel.moviesList.collect { apiResult ->
+                binding?.loadingProgressBar?.isVisible = apiResult is ApiResult.Loading
+                when (apiResult) {
+                    is ApiResult.Success -> moviesAdapter.submitList(apiResult.value?.movieResults)
+                    is ApiResult.Error -> {
+                        showErrorSnack(view)
                     }
+                    else -> {}
                 }
             }
         }
+    }
+
+    private fun showErrorSnack(view: View) {
+        snack = Snackbar.make(
+            view, R.string.error_occured_message, Snackbar.LENGTH_INDEFINITE
+        ).setAction(R.string.error_retry_option) { homeViewModel.getMovies() }
+        snack!!.show()
     }
 
     override fun onDestroy() {
