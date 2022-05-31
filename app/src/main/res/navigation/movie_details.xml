@@ -7,5 +7,9 @@
     <fragment
         android:id="@+id/movieDetailsFragment"
         android:name="com.blinxio.technicalassignment.details.MovieDetailsFragment"
-        android:label="MovieDetailsFragment" />
+        android:label="MovieDetailsFragment">
+        <argument
+            android:name="movieId"
+            app:argType="integer" />
+    </fragment>
 </navigation>
