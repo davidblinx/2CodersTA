@@ -13,6 +13,7 @@
         android:id="@+id/to_top"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:src="@drawable/ic_baseline_arrow_upward"
         android:layout_marginBottom="@dimen/fab_to_top_margin_bottom"
         android:contentDescription="@string/fab_description_to_top"
         app:layout_constraintBottom_toBottomOf="parent"
